@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class SecureResponseHeaders
+class SecureHeaders
 {
     /**
      * Handle an incoming request.
@@ -15,7 +15,12 @@ class SecureResponseHeaders
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (app()->isLocal()) return $next($request);
+        // if (app()->isLocal()) return $next($request);
+
+        // Force the all api requests to accept JSON response
+        if ($request->is('api/*')) {
+            $request->headers->set('Accept', 'application/json');
+        }
 
         // src: https://loadforge.com/guides/enhancing-laravel-security-a-guide-to-implementing-essential-http-headers
         $response = $next($request);
